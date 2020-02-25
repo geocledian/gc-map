@@ -45,13 +45,13 @@ Then you may create the widget(s) with custom HTML tags anywhere in the body sec
           gc-apikey="39553fb7-7f6f-4945-9b84-a4c8745bdbec" 
           gc-host="geocledian.com" 
           basemap="osm"
-          parcelid="4483">
+          parcel-id="4483">
   </gc-map>
   <gc-map mapid="map2"
           gc-apikey="39553fb7-7f6f-4945-9b84-a4c8745bdbec" 
           gc-host="geocledian.com" 
           basemap="google"
-          parcelid="4486">
+          parcel-id="4486">
   </gc-map>
 </div>
 ```
