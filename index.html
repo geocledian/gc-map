@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <meta charset="utf-8">
+  
+  <title>GC map</title>
+
+  <!--GC map component begin -->
+
+  <!-- loads also dependent css files via @import -->
+  <link href="css/gc-map.css" rel="stylesheet">
+  <!-- init script for components -->
+  <script type="text/javascript" src="js/gc-map-init.js"></script>
+ 
+  <!--GC map component end -->
+
+  <style>
+    body {
+      font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+      line-height: 1.1em;
+      font-size: 0.9rem;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div id="gc-app" class="is-mobile columns section">
+    <div class="column">
+      <gc-map mapid="map1" 
+              basemap="osm" 
+              gc-apikey="39553fb7-7f6f-4945-9b84-a4c8745bdbec" 
+              gc-host="geocledian.com"
+              parcel-id="4483"
+             >
+      </gc-map>
+    </div>
+      <div class="column">
+      <gc-map mapid="map2"
+              gc-apikey="39553fb7-7f6f-4945-9b84-a4c8745bdbec" 
+              gc-host="geocledian.com" 
+              basemap="osm"
+              parcel-id="4486">
+      </gc-map>
+
+    </div>
+  </div>
+
+</body>
+
+</html>
