@@ -1,7 +1,7 @@
 /*
  Vue.js Geocledian map component
  created: 2019-11-04, jsommer
- last update: 2020-02-21, jsommer
+ last update: 2020-02-27, jsommer
  version: 0.9
 */
 "use strict";
@@ -396,11 +396,11 @@ Vue.component('gc-map', {
     },
     availableProducts: {
       get: function () {
-        return (this.products.split(","));
+        //filter S2/LS8 products dependent on data source
+        return this.filterDatasourceProductCompat(this.selectedSource, this.products.split(","));
       },
       set: function (newValue) {
         this.products = newValue;
-        this.toggleProductsDatasourceCompat(newValue);
       }
     },
     selectedSource: {
@@ -475,9 +475,6 @@ Vue.component('gc-map', {
       this.map_removeAllRasters();
       let p = this.getCurrentParcel()
       p.timeseries = [];
-
-      //activate / deactivate dynamic S2 indices dependent on data source
-      this.toggleProductsDatasourceCompat(newValue);
 
       //only if valid parcel id
       if (this.currentParcelID > 0 & this.parcels.length > 0) {
@@ -597,8 +594,6 @@ Vue.component('gc-map', {
       
       //init popup for index value lat/lon
       this.popup = L.popup({autoClose: true, closeOnClick: false}).setContent('<span class="is-large"><b>Index value: ');
-
-      this.toggleProductsDatasourceCompat(this.selectedSource);
 
       //set first of available products as selected
       this.selectedProduct = this.availableProducts[0];
@@ -1918,23 +1913,24 @@ Vue.component('gc-map', {
           document.getElementById("selColormap").disabled = false;
       }
     },
-    toggleProductsDatasourceCompat: function(source) {
+    filterDatasourceProductCompat: function(source, products) {
       /*
           Handles compatibility of products & data_source
       */
-      console.debug("toggleProductsDatasourceCompat("+source+")");
+      console.debug("filterDatasourceProductCompat("+source+")");
   
-      let matrix = {"landsat8": ["visible", "vitality", "variations"],
+      let matrix = {"landsat8": ["visible", "vitality", "variations","ndvi", "ndwi", "savi", "evi2", "npcri"],
                     "sentinel2": ["visible", "vitality", "variations", "ndvi", "ndre1", "ndre2", "ndre3",
                                       "ndwi", "savi", "evi2", "cire", "npcri"]
                     };
   
-      // "landsat8", "sentinel2" or "" so check for length
+      // source may be "landsat8", "sentinel2" or "" so check for length
       if (source.length > 0){
-        this.products = matrix[source].join(',');
+        // filter out the ones which do not fit in
+        return products.filter(p=>matrix[source].includes(p))
       }
-      else {
-        this.products = matrix["sentinel2"].join(',');
+      else { //defaults to sentinel2 products if source not set
+        return products.filter(p=>matrix["sentinel2"].includes(p))
       }
     },
     /* helper functions */
