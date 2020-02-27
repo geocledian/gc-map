@@ -432,7 +432,7 @@ https://bugs.webkit.org/show_bug.cgi?id=202198
 /* hidden after loading - fade in per javascript */
 .leaflet-image-layer {
     opacity: 0;
-    transition: opacity .4s linear;
+    transition: opacity 0.4s ease-in-out;
 }
 
 /* timeline vis */

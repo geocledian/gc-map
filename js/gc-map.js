@@ -53,7 +53,7 @@ Vue.component('gc-map', {
     },
     imageChangeInterval: {
       type: String,
-      default: "400" //milliseconds
+      default: "400" // milliseconds for change in video mode; check also .leaflet-image-layer class for fade in effect
     },
     tools: {
       type: String,
