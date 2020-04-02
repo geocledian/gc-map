@@ -418,6 +418,40 @@ Vue.component('gc-map', {
       set: function (newValue) {
         this.tools = newValue;
       }
+    },
+    currentDate: {
+      get: function () {
+        // currentRasterIndex to date
+        var p = this.getCurrentParcel();
+        if (p) {
+          if (p.timeseries) {
+            if (this.currentRasterIndex >= 0)
+              return p.timeseries[this.currentRasterIndex].date;
+          }
+        }
+      },
+      set: function (newValue) {
+
+        if (!this.isDateValid(newValue)) {
+          console.error("currentDate - setter: date invalid: "+newValue);
+          return;
+        }
+        if (this.currentParcelID > 0) {
+          // parcel_id assumed unique, so return only the first
+          // compare strings
+          var p = this.getCurrentParcel();
+          if (p) {
+            if (p.timeseries) {
+              // TODO: implement some closest date function
+              let idx = p.timeseries.indexOf(p.timeseries.filter(t=>t.date == new Date(newValue).simpleDate() )[0]);
+              if (idx >= 0) {
+                // changing the index will change the image (if date is available)
+                this.currentRasterIndex = idx;
+              }
+            }
+          }
+        }
+      }
     }
   },
   created: function () {
@@ -1962,6 +1996,15 @@ Vue.component('gc-map', {
     capitalize: function (s) {
       if (typeof s !== 'string') return ''
       return s.charAt(0).toUpperCase() + s.slice(1)
+    },
+    isDateValid: function (date_str) {
+      /* Validates a given date string */
+      if (!isNaN(new Date(date_str))) {
+          return true;
+      }
+      else {
+          return false;
+      }
     },
     fillDates: function (a, b) {
       for (var c = new Date(a), d = new Date(b), e = [], f = c; d >= f;) {
