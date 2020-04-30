@@ -510,3 +510,9 @@ https://bugs.webkit.org/show_bug.cgi?id=202198
 .vis-timeline {
     display: none !important;
 }*/
+
+/* better fit to geolocation magnifying glass */
+.leaflet-touch .leaflet-bar a {
+    width: 30px;
+    height: 29px;
+}
