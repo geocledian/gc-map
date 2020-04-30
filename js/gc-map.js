@@ -1,8 +1,8 @@
 /*
  Vue.js Geocledian map component
- created: 2019-11-04, jsommer
- last update: 2020-02-27, jsommer
- version: 0.9
+ created:     2019-11-04, jsommer
+ last update: 2020-04-30, jsommer
+ version: 0.9.1
 */
 "use strict";
 
@@ -59,23 +59,33 @@ Vue.component('gc-map', {
       type: String,
       default: "edit,delete,query,legend,downloadImage,productSelector,video"
     },
+    gcAvailableOptions: {
+      type: String,
+      default: 'optionsTitle,colorMap,imageBrightness,imageTransparency'
+    },
+    gcOptionsCollapsed: {
+      type: String,
+      default: 'true' // or false
+    }
   },
   template: `<div :id="this.mapid" class="is-inline">
 
               <!-- watermark -->
-              <div class="is-inline-block is-pulled-right" style="opacity: 0.65; position: relative; top: 0rem; margin-bottom: 0.5rem;">
+              <div class="gc-logo is-inline-block is-pulled-right" style="opacity: 0.65; position: relative; top: 0rem; margin-bottom: 0.5rem;">
                 <span style="verticalalign: top; font-size: 0.7rem;">powered by</span><br>
                 <img src="img/logo.png" alt="geo|cledian" style="width: 100px; margin: -10px 0;">
               </div>
             
-              <p class="mapOptionsTitle is-size-6 is-orange is-inline-block" style="margin-bottom: 1.0rem; cursor: pointer;" 
-                  v-on:click="toggleMapOptions">
+              <p class="gc-options-title is-size-6 is-orange" 
+                  style="margin-bottom: 1.0rem; cursor: pointer;" 
+                  v-on:click="toggleMapOptions"
+                  v-show="availableOptions.includes('optionsTitle')">
                Map options 
-               <i class="fas fa-angle-down fa-sm"></i>
+               <i :class="[JSON.parse(gcOptionsCollapsed) ? '': 'is-active', 'fas', 'fa-angle-down', 'fa-sm']"></i>
               </p>
-              <div :id="'mapOptions_'+mapid" class="mapOptions is-horizontal is-flex is-hidden">
+              <div :id="'mapOptions_'+mapid" :class="[JSON.parse(gcOptionsCollapsed) ? 'is-hidden': '', 'mapOptions', 'is-horizontal', 'is-flex']">
               <div class="is-horizontal is-flex">
-                <div class="field is-vertical">
+                <div class="field is-vertical" v-show="availableOptions.includes('colorMap')">
                   <div class="field-label">
                     <label class="label has-text-left is-grey"> Colormap </label></div>
                   <div class="field-body">
@@ -103,7 +113,7 @@ Vue.component('gc-map', {
                 </div>
                 <!-- image options -->
                 <div class="field is-vertical">
-                <div class="field">
+                <div class="field" v-show="availableOptions.includes('imageBrightness')">
                   <div class="field-label">
                     <label class="label has-text-left is-grey"> Image Brightness </label></div>
                   <div class="field-body">
@@ -116,7 +126,7 @@ Vue.component('gc-map', {
                     </div>
                   </div>
               </div>
-              <div class="field">
+              <div class="field" v-show="availableOptions.includes('imageTransparency')">
                 <div class="field-label">
                   <label class="label has-text-left is-grey"> Transparency </label></div>
                 <div class="field-body">
@@ -452,7 +462,12 @@ Vue.component('gc-map', {
           }
         }
       }
-    }
+    },
+    availableOptions: {
+      get: function() {
+        return (this.gcAvailableOptions.split(","));
+      }
+    },
   },
   created: function () {
   },
@@ -1263,8 +1278,9 @@ Vue.component('gc-map', {
       if (isActive) {
 
         try {
+          document.getElementById(this.mapid).getElementsByClassName("gc-logo")[0].classList.remove("is-hidden");
           this.disableCreateParcelBtn();
-          document.getElementById(this.mapid).getElementsByClassName("mapOptionsTitle")[0].classList.remove("is-hidden");
+          document.getElementById(this.mapid).getElementsByClassName("gc-options-title")[0].classList.remove("is-hidden");
           document.getElementById("timelineContainer_"+this.mapid).classList.remove("is-hidden");
         }
         catch (err) {
@@ -1287,10 +1303,11 @@ Vue.component('gc-map', {
         try { document.getElementById("timelineContainer_"+this.mapid).classList.add("is-hidden"); } catch (err) { }
 
         //reset mapOptions
-        document.getElementById(this.mapid).getElementsByClassName("mapOptionsTitle")[0].classList.add("is-hidden");
+        document.getElementById(this.mapid).getElementsByClassName("gc-options-title")[0].classList.add("is-hidden");
         document.getElementById("mapOptions_"+ this.mapid).classList.add("is-hidden");
-        document.getElementById(this.mapid).getElementsByClassName("mapOptionsTitle")[0].children[0].classList.remove("is-active");
-        
+        document.getElementById(this.mapid).getElementsByClassName("gc-options-title")[0].children[0].classList.remove("is-active");
+        document.getElementById(this.mapid).getElementsByClassName("gc-logo")[0].classList.add("is-hidden");
+
         document.getElementById(this.mapid).classList.remove("is-inline");
         document.getElementById(this.mapid).classList.add("is-flex");
 
@@ -1679,7 +1696,7 @@ Vue.component('gc-map', {
       document.getElementById(this.mapid).classList.add("is-inline");
       document.getElementById(this.mapid).classList.remove("is-flex");
       document.getElementById("map_"+this.mapid).style.height = "360px";
-      document.getElementById("map_"+this.mapid).style.width = "auto";
+      document.getElementById("map_"+this.mapid).style.width = "100%";
 
       this.mymap.invalidateSize();
 
@@ -1923,18 +1940,7 @@ Vue.component('gc-map', {
       }
     },
     toggleMapOptions: function() {
-      let isMapOptionsActive = false;
-      isMapOptionsActive = !(document.getElementById("mapOptions_"+this.mapid).classList.contains("is-hidden"));
-  
-      if (isMapOptionsActive) {
-        document.getElementById("mapOptions_"+this.mapid).classList.add("is-hidden");
-        document.getElementById(this.mapid).getElementsByClassName("mapOptionsTitle")[0].children[0].classList.remove("is-active");
-      }
-      else {
-        document.getElementById(this.mapid).getElementsByClassName("mapOptionsTitle")[0].children[0].classList.add("is-active");  
-        document.getElementById("mapOptions_"+this.mapid).classList.remove("is-hidden");
-
-      }
+      this.gcOptionsCollapsed = !JSON.parse(this.gcOptionsCollapsed) + "";
     }, 
     toggleColormapOptions: function(selectedProduct) {
       let legProducts = ["visible", "vitality", "variations"];

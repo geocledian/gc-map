@@ -1,8 +1,8 @@
 /*
  Vue.js Geocledian map component
  created: 2019-11-04, jsommer
- last update: 2020-02-21, jsommer
- version: 0.9
+ last update: 2020-04-29, jsommer
+ version: 0.9.1
 */
 
 // root Vue instance

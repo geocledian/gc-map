@@ -1,5 +1,5 @@
-/* font awesome v5.3.1 */
-@import url('https://use.fontawesome.com/releases/v5.3.1/css/all.css');
+/* font awesome v5.6.0 */
+@import url('https://use.fontawesome.com/releases/v5.6.0/css/all.css');
 /* bulma v0.6.2 */
 @import 'bulma.min.css';
 @import 'bulma-ext/bulma-calendar.min.css';
@@ -108,19 +108,20 @@
     left: 10px;
 }
 
-.mapOptionsTitle > i {
+.gc-options-title > i {
     transform: rotate(0deg);
     transition: all 0.15s ease-in;
 }
 
-.mapOptionsTitle:hover {
+.gc-options-title:hover {
     color:#ff9800  !important;
 }
-.mapOptionsTitle > i.is-active {
+.gc-options-title > i.is-active {
     color: #9D9D9C !important;
     transform: rotate(180deg);
     transition: all 0.15s ease-in;
 }
+
 
 .mapOptions {
     margin: 0.8rem !important;
