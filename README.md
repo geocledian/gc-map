@@ -43,7 +43,7 @@ This widget is customizeable via HTML attributes and supports the setting of the
 - gc-offset: offset in request which may be defined externally; e.g. 1000; default: 0
 - gc-limit: limit of total parcels per request which may be defined externally; e.g. 100; default: 250
 - gc-parcels: array of parcel objects; may be passed externally or loaded by the widget itself; default: []
-- gc-current-parcel-id: used to highlight a parcel in the chart; may be set externally
+- gc-current-parcel-id: used to start with a certain parcel; may be set externally; default: -1
 - gc-initial-loading: loads the parcels within this map component itself; if set to false the widget waits for gc-parcels to be set; default: "true"
 - gc-image-change-interval: milliseconds for change in video mode; default: 800
 - gc-drawcontrol-position: position of the draw control in the map; 'bottomleft' or 'verticalcenterright' or 'verticalcenterleft'; default: "bottomleft"
