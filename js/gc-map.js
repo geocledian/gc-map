@@ -305,7 +305,7 @@ Vue.component('gc-map', {
     },
     gcLanguage: {
       type: String,
-      default: 'de' // 'en' | 'de'
+      default: 'en' // 'en' | 'de'
     },
     gcSelectedDate: { 
       type: String,
