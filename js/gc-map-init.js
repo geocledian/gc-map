@@ -23,6 +23,7 @@ const libs = ['https://unpkg.com/vue@2.6.11/dist/vue.min.js',
                 // Google API Key - uncomment the following two lines and enter your valid API Key here
                 // 'https://maps.googleapis.com/maps/api/js?key=YOUR_VALID_API_KEY_FROM_GOOGLE', 
                 // 'https://unpkg.com/leaflet.gridlayer.googlemutant@0.8.0/Leaflet.GoogleMutant.js',
+                'css/bulma-ext/bulma-calendar.min.js',
                 'https://unpkg.com/leaflet-geosearch@2.7.0/dist/bundle.min.js',
                 'https://unpkg.com/vis-timeline@7.1.2/standalone/umd/vis-timeline-graph2d.min.js'
             ];
