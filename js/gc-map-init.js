@@ -1,15 +1,23 @@
 /*
  Vue.js Geocledian map component
  created: 2019-11-04, jsommer
- last update: 2020-04-29, jsommer
- version: 0.9.1
+ last update: 2020-06-10, jsommer
+ version: 0.9.2
 */
 
 // root Vue instance
 var vmRoot;
 
+// global gc locale object
+// every component may append its data to this
+var gcLocales = { en: {}, de: {} };
+
+// global i18n object
+var i18n;
+
 // init dependent javascript libs
 const libs = ['https://unpkg.com/vue@2.6.11/dist/vue.min.js',
+                'https://unpkg.com/vue-i18n@8.17.5/dist/vue-i18n.js',
                 'https://unpkg.com/leaflet@1.3.1/dist/leaflet.js',
                 'https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/leaflet.draw.js',
                 // Google API Key - uncomment the following two lines and enter your valid API Key here
@@ -82,12 +90,25 @@ function initComponent() {
     /* 
       inits component
     */
+    i18n = new VueI18n({
+      locale: 'en', // set locale
+      fallbackLocale: 'en',
+      messages: gcLocales, // set locale messages
+    })
+
+    // bind index locales to global locales
+    if (typeof indexLocales !== 'undefined') {
+      gcLocales.de.indexLocales = indexLocales.de;
+      gcLocales.en.indexLocales = indexLocales.en;
+    }
+
     // load map component dynamically
     // change for DEBUG to js/gc-map.js
     loadJSscript("js/gc-map.min.js", function() {
         /* when ready, init global vue root instance */
         vmRoot = new Vue({
-            el: "#gc-app"
+            el: "#gc-app",
+            i18n: i18n //root i18n
         });
     });
 }

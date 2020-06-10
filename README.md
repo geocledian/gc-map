@@ -5,12 +5,50 @@ It is built as a reusable [Vue.js](https://www.vuejs.org) component which allows
 You may but you don't have to build the rest of the container application with [Vue.js](https://www.vuejs.org).
 
 ## Purpose
-With this widget you are able to visualize a timeseries of satellite images of a registered parcel in a map. 
+With this widget you are able to visualize a timeseries of satellite images and products (NDVI, NDWI, etc.) of a registered parcel in a map from the REST API of ag|knowledge from geocledian.com.
 > **Please note** that the widget contains a DEMO API Key and a DEMO parcel. If you want to visualize your data it has to be registered first in the REST API of ag|knowledge from geocledian.com. <br> Contact us for getting an API Key and registering your data.
 
 It is customizeable via HTML attributes and also offers a video mode.<br>
 ![gc-map](doc/img/gc_map.png)
 
+## Configuration
+This widget is customizeable via HTML attributes and supports the setting of the following attributes.
+
+### Basic options
+- gc-apikey: API Key from geocledian, e.g. "39553fb7-7f6f-4945-9b84-a4c8745bdbec"; default: '39553fb7-7f6f-4945-9b84-a4c8745bdbec'
+- gc-host: base host, e.g. "geocledian.com"; default: 'geocledian.com'
+- gc-basemap: background (basemap) to use in the map, e.g. "osm", "google" or "arcgis"; default: "osm"
+- gc-selected-product: set selected product for the comparison of the parcels in the map, e.g. "$root.selectedProduct" or static e.g. "savi"; default: "" (empty)
+- gc-data-source: current datasource, e.g. "$root.dataSource" (synchro from root) or static e.g. "sentinel2", "landsat8" or "" (all); default: "" (all)
+- gc-selected-date: date as simple ISO date string to compare the parcels for an index product, e.g. '2020-03-01' or "$root.queryDate"; default: ""
+- gc-language: initial locale language for translation, e.g. "en" for english; default: "en"
+  
+### UI options
+- gc-available-products: limit the available products, e.g. "ndvi,ndwi"; default: "visible,vitality,variations,ndvi,ndwi,ndre1,ndre2,savi,evi2,cire,npcri"
+- gc-available-options: limit the available options, e.g. "" for not title at all; default: "optionsTitle,colorMap,imageBrightness,imageTransparency"
+- gc-available-tools: limit the available map tools, e.g. "" for no buttons at all; default: "edit,delete,query,legend,downloadImage,productSelector,video"
+- gc-options-collapsed: start the widget with options collapsed; default: "true"
+
+### Advanced options
+#### Proxy mode / URL options
+- gc-proxy: string which defines an alternative URL for sending the requests made by the widget instead of gc-host, e.g. "someproxy.someserver.com/app"; default: undefined
+
+> __Note__: in proxy mode both gc-host and gc-api-key attributes are ignored and will not be sent to the given gc-proxy URL! It is assumed, that the Proxy will add the key parameter to the URL and sends the modified URL to the agknowledge service.
+
+- gc-api-base-url: string for changing the base API URL for the agknowledge service; default: "/agknow/api/v3"
+- gc-api-secure: boolean for specifying if HTTPS or HTTP shall be used sending the requests made by the widget;  default: true
+
+#### Other
+- gc-filter-string: filter string which may be defined externally; e.g. "&crop=bla"; default: ""
+- gc-offset: offset in request which may be defined externally; e.g. 1000; default: 0
+- gc-limit: limit of total parcels per request which may be defined externally; e.g. 100; default: 250
+- gc-parcels: array of parcel objects; may be passed externally or loaded by the widget itself; default: []
+- gc-current-parcel-id: used to highlight a parcel in the chart; may be set externally
+- gc-initial-loading: loads the parcels within this map component itself; if set to false the widget waits for gc-parcels to be set; default: "true"
+- gc-image-change-interval: milliseconds for change in video mode; default: 800
+- gc-drawcontrol-position: position of the draw control in the map; 'bottomleft' or 'verticalcenterright' or 'verticalcenterleft'; default: "bottomleft"
+
+>Note: As there are defaults you will only have to set an attribute to change the default internal value.
 
 ## Integration
 For the integration of the widget you'll have to follow two steps.
@@ -76,7 +114,7 @@ Please contact [us](mailto:info@geocledian.com) from geocledian.com if you have 
 
 ## Used Libraries
 - [Vue.js](https://www.vuejs.org)
-- [Leaflet.js](https://leafletjs.com/)
+- [Leaflet](https://leafletjs.com/)
 - [Leaflet Draw Plugin](http://leaflet.github.io/Leaflet.draw/docs/leaflet-draw-latest.html)
 - [Leaflet GeoSearch Plugin](https://github.com/smeijer/leaflet-geosearch)
 - [vis.js](https://visjs.org/)

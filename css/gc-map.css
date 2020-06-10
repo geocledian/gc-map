@@ -146,7 +146,7 @@
     position: absolute;
     font-size: 11px;
     z-index: 1200; 
-    background-color: #F0F0F0;
+    background-color: #fff;
     right: 4px;
     top: 4px;
     border-radius: 3px;
@@ -515,4 +515,8 @@ https://bugs.webkit.org/show_bug.cgi?id=202198
 .leaflet-touch .leaflet-bar a {
     width: 30px;
     height: 29px;
+}
+
+.gc-api-message[gc-map] {
+    margin-top: 2em;
 }
