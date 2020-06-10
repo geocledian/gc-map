@@ -515,8 +515,8 @@ Vue.component('gc-map', {
 
           </div><!-- map -->
           <!-- divCreateParcel -->
-          <!-- flex-grow 4 is looks better for aligning label and field -->
-          <div class="is-hidden" :id="'divCreateParcel_'+this.gcWidgetId" style="margin: 20px!important; flex-grow: 4 !important;"> 
+          <!-- flex-grow 1 is looks better for aligning label and field -->
+          <div class="is-hidden" :id="'divCreateParcel_'+this.gcWidgetId" style="margin-top: 0.75em; margin-left: 1em; margin-right: 1em; flex-grow: 1 !important;"> 
               <p class="title is-6 is-orange"><i class="fas fa-plus-circle fa-lg"></i> {{ $t('newParcel.title') }} </p>  
               <div class="field is-horizontal">
                 <div class="field-label is-small"><label class="label is-grey has-text-left"> {{ $t('newParcel.apikey') }} </label></div>
