@@ -807,6 +807,9 @@ Vue.component('gc-map', {
   mounted: function () {
     
     console.debug("gc-map - mounted!");
+
+    // listen on size change handler
+    this.$root.$on("containerSizeChange", this.containerSizeChange);
     
     try {
       this.changeLanguage();
@@ -2182,6 +2185,10 @@ Vue.component('gc-map', {
 
       document.getElementById("divNewParcelMsg_" + this.gcWidgetId).innerHTML = '';
       document.getElementById("divNewParcelMsg_" + this.gcWidgetId).classList.add("is-hidden");
+    },
+    containerSizeChange(size) {
+      /* handles the resize of the map if parent container size changes */
+      this.mymap.invalidateSize();
     },
     /* time slider */
     initTimeline: function () {
