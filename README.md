@@ -20,7 +20,7 @@ This widget is customizeable via HTML attributes and supports the setting of the
 - gc-basemap: background (basemap) to use in the map, e.g. "osm", "google" or "arcgis"; default: "osm"
 - gc-selected-product: set selected product for the comparison of the parcels in the map, e.g. "$root.selectedProduct" or static e.g. "savi"; default: "" (empty)
 - gc-data-source: current datasource, e.g. "$root.dataSource" (synchro from root) or static e.g. "sentinel2", "landsat8" or "" (all); default: "" (all)
-- gc-selected-date: date as simple ISO date string to compare the parcels for an index product, e.g. '2020-03-01' or "$root.queryDate"; default: ""
+- gc-selected-date: date as simple ISO date string to set the query date of an API product, e.g. '2020-03-01' or "$root.queryDate"; default: ""
 - gc-language: initial locale language for translation, e.g. "en" for english; default: "en"
   
 ### UI options
