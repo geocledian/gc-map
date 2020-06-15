@@ -1,7 +1,7 @@
 /*
  Vue.js Geocledian map component
  created:     2019-11-04, jsommer
- last update: 2020-06-10, jsommer
+ last update: 2020-06-15, jsommer
  version: 0.9.2
 */
 "use strict";
@@ -326,12 +326,8 @@ Vue.component('gc-map', {
   },
   template: `<div :id="this.gcWidgetId" class="is-inline">
 
-              <!-- watermark -->
-              <div class="gc-logo is-inline-block is-pulled-right" style="opacity: 0.65; position: relative; top: 0rem; margin-bottom: 0.5rem;">
-                <span style="verticalalign: top; font-size: 0.7rem;">powered by</span><br>
-                <img src="img/logo.png" alt="geo|cledian" style="width: 100px; margin: -10px 0;">
-              </div>
-            
+              <div class="level" style="margin-bottom: 0px;">
+           
               <p class="gc-options-title is-inline is-size-6 is-orange" 
                   style="margin-bottom: 1.0rem; cursor: pointer;" 
                   v-on:click="toggleMapOptions"
@@ -339,6 +335,15 @@ Vue.component('gc-map', {
                {{$t("options.title")}}
                <i :class="[gcOptionsCollapsed ? '': 'is-active', 'fas', 'fa-angle-down', 'fa-sm']"></i>
               </p>
+
+              <!-- watermark -->
+              <div class="is-inline-block" style="opacity: 0.65; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.7rem;">powered by</span><br>
+                <img src="img/logo.png" alt="geo|cledian" style="width: 100px; margin: -10px 0;">
+              </div>
+
+              </div>
+
               <div :id="'mapOptions_'+gcWidgetId" :class="[gcOptionsCollapsed ? 'is-hidden': '', 'mapOptions', 'is-horizontal', 'is-flex']">
               <div class="is-horizontal is-flex">
                 <div class="field is-vertical" v-show="availableOptions.includes('colorMap')">
@@ -403,6 +408,9 @@ Vue.component('gc-map', {
             <!-- attributive css here -->
             <div gc-map class="notification gc-api-message" v-show="this.api_err_msg.length > 0" v-html="this.api_err_msg"></div>
 
+            <!-- container for map and newParcel div -->
+            <div :id="'innerContainer_'+ this.gcWidgetId" class="is-inline">
+
             <div :id="'map_'+ this.gcWidgetId" class="gc-map" v-show="this.api_err_msg.length==0">
             <!-- mobile: onclick and onblur events instead of onmouseover and onmouseout -->
             <div :id="'layerControl_'+gcWidgetId" class="layerControl" v-on:mouseover="growLayerControl" 
@@ -433,7 +441,7 @@ Vue.component('gc-map', {
             </div><!-- layerControl -->
 
             <div :id="'divMapBtns_'+gcWidgetId" class="divMapBtns" style="padding-top: 42px; padding-left: 6px; float: left;">
-                <button gc-map :id="'btnCreateParcel_'+gcWidgetId" :title="$t('map.buttons.createParcel.title')" class=" button is-light is-orange" 
+                <button gc-map :title="$t('map.buttons.createParcel.title')" :class="[this.activeMapActions.includes('edit') ? ['is-dark', 'is-active'] : 'is-light', 'button', 'is-orange']" 
                         v-on:click="createParcelAction" v-show="availableTools.includes('edit')">
                   <i class="fas fa-edit"></i>
                 </button>
@@ -443,11 +451,11 @@ Vue.component('gc-map', {
                 <i class="fas fa-trash-alt"></i>
               </button>
               
-                <button gc-map :id="'btnQueryIndexValue_'+gcWidgetId" :title="$t('map.buttons.queryIndexValue.title')" class="button is-light is-orange" 
+                <button gc-map :id="'btnQueryIndexValue_'+this.gcWidgetId" :title="$t('map.buttons.queryIndexValue.title')" :class="[this.activeMapActions.includes('query') ? ['is-dark', 'is-active'] : 'is-light', 'button', 'is-orange']"
                       v-on:click="queryIndexValueAction" v-show="availableTools.includes('query')" disabled>
                   <i class="fas fa-info-circle"></i>
                 </button>
-                <button gc-map :id="'btnToggleLegend_'+gcWidgetId" :title="$t('map.buttons.toggleLegend.title')" class="button is-light is-orange"
+                <button gc-map :id="'btnToggleLegend_'+gcWidgetId" :title="$t('map.buttons.toggleLegend.title')" :class="[this.activeMapActions.includes('legend') ? ['is-dark', 'is-active'] : 'is-light', 'button', 'is-orange']"
                       v-on:click="toggleLegend"
                       v-on:mouseover=""
                       v-if="availableTools.includes('legend')">
@@ -517,7 +525,7 @@ Vue.component('gc-map', {
           <!-- divCreateParcel -->
           <!-- flex-grow 1 is looks better for aligning label and field -->
           <div class="is-hidden" :id="'divCreateParcel_'+this.gcWidgetId" style="margin-top: 0.75em; margin-left: 1em; margin-right: 1em; flex-grow: 1 !important;"> 
-              <p class="title is-6 is-orange"><i class="fas fa-plus-circle fa-lg"></i> {{ $t('newParcel.title') }} </p>  
+              <p class="subtitle is-6 is-orange"><i class="fas fa-plus-circle fa-lg"></i> {{ $t('newParcel.title') }} </p>  
               <div class="field is-horizontal">
                 <div class="field-label is-small"><label class="label is-grey has-text-left"> {{ $t('newParcel.apikey') }} </label></div>
                 <div class="control">
@@ -576,6 +584,10 @@ Vue.component('gc-map', {
                 {{ this.api_msg }}
               </div>
             </div><!-- divCreateParcel -->
+
+            </div>
+            <!-- container for map and newParcel div -->
+
             <div :id="'timelineContainer_'+this.gcWidgetId" class="is-inline is-hidden" v-if="availableTools.includes('video')">
             <!-- video -->
             <div :id="'player_'+this.gcWidgetId" class="gc-player is-pulled-left" style="z-index: 1000; position: relative; left: 0px; bottom: 0px; margin-bottom: 0px!important;">
@@ -638,7 +650,6 @@ Vue.component('gc-map', {
       offset: 0,
       pagingStep: 250,
       total_parcel_count: 250,
-      mapLegendVisible: false,
       popup: undefined,
       lastLatLng: {
         lat: 0,
@@ -660,6 +671,7 @@ Vue.component('gc-map', {
       isArcGISValid: false, //to be set manually from developer!
       isloading: false, // indicates if data is being loaded or not
       api_err_msg: "", // if there is an error from the API, it will stored here; if length > 0 it will be displayed
+      activeMapActions: [] // may contain "edit", "query", "legend"
     }
   },
   computed: {
@@ -893,8 +905,7 @@ Vue.component('gc-map', {
         }
 
         /*if query index value is active */
-        let isQueryActive = document.getElementById("btnQueryIndexValue_" + this.gcWidgetId).classList.contains("is-active");
-        if (isQueryActive) {
+        if (this.activeMapActions.includes('query')) {
           this.getIndexValueforCoordinate(this.lastLatLng);
         }
 
@@ -967,14 +978,15 @@ Vue.component('gc-map', {
       this.changeLanguage();
 
       //refresh legend also if active - because HTML is created dynamically, translation changes will not fire as usual
-      this.mapLegendVisible = document.getElementById("btnToggleLegend_" + this.gcWidgetId).classList.contains("is-active");
-      if (this.parcels.length > 0 && this.mapLegendVisible) {
+      if (this.parcels.length > 0 && this.activeMapActions.includes("legend")) {
         this.addLegendControl(this.mymap);
       }
       //refresh leaflet map controls
       this.initZoomControl();
       this.initSearchControl();
-      this.initDrawControl();
+      // only reinit draw control if editing is toggled - otherwise it will show up in any case
+      if (this.drawControl)
+        this.initDrawControl();
 
       //reset date pickers
       this.initDatePickers();
@@ -1279,7 +1291,7 @@ Vue.component('gc-map', {
       L.drawLocal.draw.handlers.polygon.tooltip.start = this.$t("map.drawControl.L_drawLocal_draw_handlers_polygon_tooltip_start");
       L.drawLocal.draw.handlers.polygon.tooltip.cont = this.$t("map.drawControl.L_drawLocal_draw_handlers_polygon_tooltip_cont");
       L.drawLocal.draw.handlers.polygon.tooltip.end = this.$t("map.drawControl.L_drawLocal_draw_handlers_polygon_tooltip_end");
-      L.drawLocal.edit.toolbar.actions.save.title = this.$t("map.drawControl.L_drawLocal_edit_toolbar_actions_save_title ");
+      L.drawLocal.edit.toolbar.actions.save.title = this.$t("map.drawControl.L_drawLocal_edit_toolbar_actions_save_title");
       L.drawLocal.edit.toolbar.actions.save.text = this.$t("map.drawControl.L_drawLocal_edit_toolbar_actions_save_text");
       L.drawLocal.edit.toolbar.actions.cancel.title = this.$t("map.drawControl.L_drawLocal_edit_toolbar_actions_cancel_title");
       L.drawLocal.edit.toolbar.actions.cancel.text = this.$t("map.drawControl.L_drawLocal_edit_toolbar_actions_cancel_text");
@@ -1564,6 +1576,9 @@ Vue.component('gc-map', {
       let xmlHttp = new XMLHttpRequest();
       let async = true;
 
+      // empty timeseries first!
+      this.currentTimeseries = [];
+
       //Show requests on the DEBUG console for developers
       console.debug("getParcelsProductData()");
       console.debug("GET " + this.getApiUrl(endpoint) + params);
@@ -1589,7 +1604,7 @@ Vue.component('gc-map', {
 
             try{ 
               //init only if in Non-Edit mode
-              if (!document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.contains("is-active"))
+              if (!this.activeMapActions.includes("edit"))
                 this.initTimeline();
             } 
             catch (err) {}
@@ -1653,7 +1668,7 @@ Vue.component('gc-map', {
         let params = "&colormap=" + this.colormap;
         this.map_addRaster(this.getApiUrl(endpoint) + params, row.bounds);
 
-        if (this.mapLegendVisible) {
+        if (this.activeMapActions.includes("legend")) {
           this.showLegend(row);
         }
 
@@ -1766,21 +1781,19 @@ Vue.component('gc-map', {
     createParcelAction: function () {
 
       try {
-        let isQueryActive = document.getElementById("btnQueryIndexValue_" + this.gcWidgetId).classList.contains("is-active");
-        if (isQueryActive) {
+        if (this.activeMapActions.includes("query")) {
             this.disableQueryBtn();
         }        
       }
       catch (err)
       { console.debug("could not disable query button.");}
 
-      let isActive = document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.contains("is-active");
-      if (isActive) {
+      if (this.activeMapActions.includes("edit")) {
 
         try {
-          document.getElementById(this.gcWidgetId).getElementsByClassName("gc-logo")[0].classList.remove("is-hidden");
+          // document.getElementById(this.gcWidgetId).getElementsByClassName("gc-logo")[0].classList.remove("is-hidden");
           this.disableCreateParcelBtn();
-          document.getElementById(this.gcWidgetId).getElementsByClassName("gc-options-title")[0].classList.remove("is-hidden");
+          // document.getElementById(this.gcWidgetId).getElementsByClassName("gc-options-title")[0].classList.remove("is-hidden");
           document.getElementById("timelineContainer_"+this.gcWidgetId).classList.remove("is-hidden");
         }
         catch (err) {
@@ -1803,16 +1816,18 @@ Vue.component('gc-map', {
         try { document.getElementById("timelineContainer_"+this.gcWidgetId).classList.add("is-hidden"); } catch (err) { }
 
         //reset mapOptions
-        document.getElementById(this.gcWidgetId).getElementsByClassName("gc-options-title")[0].classList.add("is-hidden");
-        document.getElementById("mapOptions_"+ this.gcWidgetId).classList.add("is-hidden");
-        document.getElementById(this.gcWidgetId).getElementsByClassName("gc-options-title")[0].children[0].classList.remove("is-active");
-        document.getElementById(this.gcWidgetId).getElementsByClassName("gc-logo")[0].classList.add("is-hidden");
+        // document.getElementById(this.gcWidgetId).getElementsByClassName("gc-options-title")[0].classList.add("is-hidden");
+        // document.getElementById("mapOptions_"+ this.gcWidgetId).classList.add("is-hidden");
+        // document.getElementById(this.gcWidgetId).getElementsByClassName("gc-options-title")[0].children[0].classList.remove("is-active");
+        // document.getElementById(this.gcWidgetId).getElementsByClassName("gc-logo")[0].classList.add("is-hidden");
 
-        document.getElementById(this.gcWidgetId).classList.remove("is-inline");
-        document.getElementById(this.gcWidgetId).classList.add("is-flex");
+        // document.getElementById(this.gcWidgetId).classList.remove("is-inline");
+        // document.getElementById(this.gcWidgetId).classList.add("is-flex");
+        document.getElementById("innerContainer_" + this.gcWidgetId).classList.remove("is-inline");
+        document.getElementById("innerContainer_" + this.gcWidgetId).classList.add("is-flex");
 
-        document.getElementById("map_"+this.gcWidgetId).style.height = "480px";
-        document.getElementById("map_"+this.gcWidgetId).style.width = "60%";
+        // document.getElementById("map_"+this.gcWidgetId).style.height = "480px";
+        document.getElementById("map_"+this.gcWidgetId).style.width = "70%";
         this.mymap.invalidateSize(); // make sure map resizes also
 
         document.getElementById("divCreateParcel_" + this.gcWidgetId).classList.remove("is-hidden");
@@ -1820,11 +1835,14 @@ Vue.component('gc-map', {
 
         this.map_startEditing();
 
-        try {
-          document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.add('is-active');
-          document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.add("is-dark");
-          document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.remove("is-light");
-        } catch (err) { }
+        if (!this.activeMapActions.includes("edit"))
+          this.activeMapActions.push("edit");
+
+        // try {
+        //   document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.add('is-active');
+        //   document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.add("is-dark");
+        //   document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.remove("is-light");
+        // } catch (err) { }
         this.newParcel.key = this.apiKey;
       }
     },
@@ -1929,24 +1947,22 @@ Vue.component('gc-map', {
     queryIndexValueAction: function () {
 
       try {
-        let isEditActive = document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.contains("is-active");
-        if (isEditActive) {
-          this.disableEditBtn();
+        if (this.activeMapActions.includes("edit")) {
+          this.disableCreateParcelBtn();
         }
       }
       catch (err) {}
 
       try {
-        let isActive = document.getElementById("btnQueryIndexValue_" + this.gcWidgetId).classList.contains("is-active");
         // turn it off
-        if (isActive) {
+        if (this.activeMapActions.includes("query")) {
           this.disableQueryBtn();
         }
         //turn query on
         else {
-          document.getElementById("btnQueryIndexValue_" + this.gcWidgetId).classList.add("is-active");
-          document.getElementById("btnQueryIndexValue_" + this.gcWidgetId).classList.remove("is-light");
-          document.getElementById("btnQueryIndexValue_" + this.gcWidgetId).classList.add("is-dark");
+          if (!this.activeMapActions.includes("query"))
+            this.activeMapActions.push("query");
+
           //leaflet has its own interactive region within the map (bbox of layers)
           //so change cursor only for this element
           document.getElementById("map_"+this.gcWidgetId).getElementsByClassName("leaflet-interactive")[0].style.cursor = "crosshair";
@@ -2027,7 +2043,7 @@ Vue.component('gc-map', {
       this.imageLayer.setOpacity(1.0);
 
       // fade legend in via css transition
-      if (this.mapLegendVisible) {
+      if (this.activeMapActions.includes("legend")) {
         try {
           document.getElementById("mapLegendContentImage_" + this.gcWidgetId).style.opacity = 1;
         } catch (err) {}
@@ -2149,9 +2165,8 @@ Vue.component('gc-map', {
       document.getElementById("btnDownloadImage_" + this.gcWidgetId).classList.remove("is-hidden");
     },
     disableQueryBtn: function () {
-      document.getElementById("btnQueryIndexValue_" + this.gcWidgetId).classList.remove("is-active");
-      document.getElementById("btnQueryIndexValue_" + this.gcWidgetId).classList.remove("is-dark");
-      document.getElementById("btnQueryIndexValue_" + this.gcWidgetId).classList.add("is-light");
+      
+      this.removeFromArray(this.activeMapActions, "query");
 
       //works only if the map has an active parcel layer!
       if (document.getElementById("map_"+this.gcWidgetId).getElementsByClassName("leaflet-interactive").length > 0) {
@@ -2170,18 +2185,22 @@ Vue.component('gc-map', {
     disableCreateParcelBtn: function () {
 
       document.getElementById("divCreateParcel_" + this.gcWidgetId).classList.add("is-hidden");
-      document.getElementById(this.gcWidgetId).classList.add("is-inline");
-      document.getElementById(this.gcWidgetId).classList.remove("is-flex");
-      document.getElementById("map_"+this.gcWidgetId).style.height = "360px";
+      // document.getElementById(this.gcWidgetId).classList.add("is-inline");
+      // document.getElementById(this.gcWidgetId).classList.remove("is-flex");
+      // document.getElementById("map_"+this.gcWidgetId).style.height = "360px";
+      document.getElementById("innerContainer_" + this.gcWidgetId).classList.add("is-inline");
+      document.getElementById("innerContainer_" + this.gcWidgetId).classList.remove("is-flex");
       document.getElementById("map_"+this.gcWidgetId).style.width = "100%";
 
       this.mymap.invalidateSize();
 
       this.map_endEditing();
 
-      document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.remove('is-active');
-      document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.remove("is-dark");
-      document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.add("is-light");
+      this.removeFromArray(this.activeMapActions, "edit");
+
+      // document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.remove('is-active');
+      // document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.remove("is-dark");
+      // document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.add("is-light");
 
       document.getElementById("divNewParcelMsg_" + this.gcWidgetId).innerHTML = '';
       document.getElementById("divNewParcelMsg_" + this.gcWidgetId).classList.add("is-hidden");
@@ -2398,26 +2417,17 @@ Vue.component('gc-map', {
     },
     toggleLegend: function () {
 
-      this.mapLegendVisible = document.getElementById("btnToggleLegend_" + this.gcWidgetId).classList.contains("is-active");
-
-      if (this.mapLegendVisible) {
-
-        document.getElementById("btnToggleLegend_" + this.gcWidgetId).classList.remove("is-active");
-        document.getElementById("btnToggleLegend_" + this.gcWidgetId).classList.add("is-light");
-        document.getElementById("btnToggleLegend_" + this.gcWidgetId).classList.remove("is-dark");
+      if (this.activeMapActions.includes("legend")) {
+        // hide
+        this.removeFromArray(this.activeMapActions, "legend");
 
         document.getElementById("mapLegendContent_" + this.gcWidgetId).classList.add("is-hidden");
 
-        this.mapLegendVisible = false;
       } else {
 
         this.showLegend(this.getCurrentRaster());
 
-        document.getElementById("btnToggleLegend_" + this.gcWidgetId).classList.add("is-active");
-        document.getElementById("btnToggleLegend_" + this.gcWidgetId).classList.remove("is-light");
-        document.getElementById("btnToggleLegend_" + this.gcWidgetId).classList.add("is-dark");
-
-        this.mapLegendVisible = true;
+        this.activeMapActions.push("legend");
       }
     },
     toggleMapOptions: function() {
@@ -2456,6 +2466,13 @@ Vue.component('gc-map', {
       }
     },
     /* helper functions */
+    removeFromArray: function(arry, value) {
+      let index = arry.indexOf(value);
+      if (index > -1) {
+          arry.splice(index, 1);
+      }
+      return arry;
+    },
     formatDecimal: function (decimal, numberOfDecimals) {
       /* Helper function for formatting numbers to given number of decimals */
 
