@@ -1,8 +1,8 @@
 /*
  Vue.js Geocledian map component
  created:     2019-11-04, jsommer
- last update: 2020-06-15, jsommer
- version: 0.9.2
+ last update: 2020-06-17, jsommer
+ version: 0.9.3
 */
 "use strict";
 
@@ -2095,6 +2095,7 @@ Vue.component('gc-map', {
         this.drawnItems.clearLayers();
         this.mymap.removeLayer(this.drawnItems);
         this.mymap.removeControl(this.drawControl);
+        this.drawControl = undefined;
       } catch (err) {
         //console.log(err);
       }
@@ -2185,9 +2186,6 @@ Vue.component('gc-map', {
     disableCreateParcelBtn: function () {
 
       document.getElementById("divCreateParcel_" + this.gcWidgetId).classList.add("is-hidden");
-      // document.getElementById(this.gcWidgetId).classList.add("is-inline");
-      // document.getElementById(this.gcWidgetId).classList.remove("is-flex");
-      // document.getElementById("map_"+this.gcWidgetId).style.height = "360px";
       document.getElementById("innerContainer_" + this.gcWidgetId).classList.add("is-inline");
       document.getElementById("innerContainer_" + this.gcWidgetId).classList.remove("is-flex");
       document.getElementById("map_"+this.gcWidgetId).style.width = "100%";
@@ -2197,10 +2195,6 @@ Vue.component('gc-map', {
       this.map_endEditing();
 
       this.removeFromArray(this.activeMapActions, "edit");
-
-      // document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.remove('is-active');
-      // document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.remove("is-dark");
-      // document.getElementById("btnCreateParcel_" + this.gcWidgetId).classList.add("is-light");
 
       document.getElementById("divNewParcelMsg_" + this.gcWidgetId).innerHTML = '';
       document.getElementById("divNewParcelMsg_" + this.gcWidgetId).classList.add("is-hidden");
