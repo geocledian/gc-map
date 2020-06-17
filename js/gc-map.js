@@ -149,7 +149,7 @@ const gcMapLocales = {
                   "eos": "Saisonende",
                   "vitality": "Vitalität",
                   "variations": "Variabilität",
-                  "visible": "Sichtbar (RGB)",
+                  "visible": "Satellitenbild (RGB)",
                   "ndvi": "NDVI",
                   "ndre1": "NDRE1",
                   "ndre2": "NDRE2",
@@ -322,6 +322,10 @@ Vue.component('gc-map', {
     gcDrawcontrolPosition: {
       type: String,
       default: 'bottomleft' // 'bottomleft' or 'verticalcenterright' or 'verticalcenterleft'
+    },
+    gcLegendPosition: {
+      type: String,
+      default: 'topright' // 'bottomleft' or 'topright' 
     }
   },
   template: `<div :id="this.gcWidgetId" class="is-inline">
@@ -331,13 +335,14 @@ Vue.component('gc-map', {
               <p class="gc-options-title is-inline is-size-6 is-orange" 
                   style="margin-bottom: 1.0rem; cursor: pointer;" 
                   v-on:click="toggleMapOptions"
-                  v-show="availableOptions.includes('optionsTitle')">
+                  v-if="availableOptions.includes('optionsTitle')">
                {{$t("options.title")}}
                <i :class="[gcOptionsCollapsed ? '': 'is-active', 'fas', 'fa-angle-down', 'fa-sm']"></i>
               </p>
 
               <!-- watermark -->
-              <div class="is-inline-block" style="opacity: 0.65; margin-bottom: 0.5rem;">
+              <div class="is-inline-block" style="opacity: 0.65; margin-bottom: 0.5rem;" 
+                v-if="!availableOptions.includes('nologo')">
                 <span style="font-size: 0.7rem;">powered by</span><br>
                 <img src="img/logo.png" alt="geo|cledian" style="width: 100px; margin: -10px 0;">
               </div>
@@ -504,7 +509,8 @@ Vue.component('gc-map', {
               <div class="rect5"></div>
             </div>
 
-            <div :id="'mapLegendContent_'+gcWidgetId" class="mapLegendContent has-text-justified is-hidden">
+            <div :id="'mapLegendContent_'+gcWidgetId" 
+                  :class="[gcLegendPosition === 'topright' ? 'topright' : 'bottomleft', 'mapLegendContent','has-text-justified','is-hidden']">
             </div>
 
             <!-- product selector -->

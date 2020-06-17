@@ -47,6 +47,7 @@ This widget is customizeable via HTML attributes and supports the setting of the
 - gc-initial-loading: loads the parcels within this map component itself; if set to false the widget waits for gc-parcels to be set; default: "true"
 - gc-image-change-interval: milliseconds for change in video mode; default: 800
 - gc-drawcontrol-position: position of the draw control in the map; 'bottomleft' or 'verticalcenterright' or 'verticalcenterleft'; default: "bottomleft"
+- gc-legend-position: position of the legend in the map; 'topright' or 'bottomleft' ; default: "topright"
 
 >Note: As there are defaults you will only have to set an attribute to change the default internal value.
 

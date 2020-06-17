@@ -146,8 +146,6 @@
     font-size: 11px;
     z-index: 1200; 
     background-color: #fff;
-    right: 4px;
-    top: 4px;
     border-radius: 3px;
     padding-left: 6px;
     padding-top: 6px;
@@ -158,6 +156,14 @@
     border-width: 1px !important;
     border-style: solid !important;
     border-color: rgb(216, 216, 216) !important;
+}
+.mapLegendContent.topright {
+    right: 4px;
+    top: 4px;
+}
+.mapLegendContent.bottomleft {
+    left: 4px;
+    bottom: 4px;
 }
 
 .mapLegendContentImage {
