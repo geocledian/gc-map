@@ -1,8 +1,8 @@
 /*
  Vue.js Geocledian map component
  created:     2019-11-04, jsommer
- last update: 2020-06-17, jsommer
- version: 0.9.3
+ last update: 2020-06-18, jsommer
+ version: 0.9.4
 */
 "use strict";
 
@@ -770,8 +770,9 @@ Vue.component('gc-map', {
           var p = this.getCurrentParcel();
           if (p) {
             if (p.timeseries) {
-              // TODO: implement some closest date function
-              let idx = p.timeseries.indexOf(p.timeseries.filter(t=>t.date == new Date(newValue).simpleDate() )[0]);
+              // snaps to closest date
+              let idx = this.getClosestTimeSeriesIndex(new Date(newValue).simpleDate());
+              //let idx = p.timeseries.indexOf(p.timeseries.filter(t=>t.date == new Date(newValue).simpleDate() )[0]);
               if (idx >= 0) {
                 // changing the index will change the image (if date is available)
                 this.currentRasterIndex = idx;
@@ -2465,6 +2466,14 @@ Vue.component('gc-map', {
         return products.filter(p=>matrix["sentinel2"].includes(p))
       }
     },
+    getClosestTimeSeriesIndex: function (queryDate) {
+      /* returns the nearest Date to the given parcel_id and query date */
+      const p = this.getCurrentParcel();
+      const exactDate = this.getClosestDate(p.timeseries.map(d => new Date(d.date)), new Date(queryDate));
+      console.debug("closest date of given date "+ queryDate + " is "+ exactDate.simpleDate());
+      // find the index of the closest date in timeseries now
+      return p.timeseries.map(d => d.date).indexOf(exactDate.simpleDate());
+    },
     /* helper functions */
     removeFromArray: function(arry, value) {
       let index = arry.indexOf(value);
@@ -2510,6 +2519,17 @@ Vue.component('gc-map', {
       else {
           return false;
       }
+    },
+    getClosestDate: function (arr, queryDate) {
+      console.debug("getClosestDate()");
+      /* Returns the closest date in a array of dates
+         with the sort function */
+      let i = arr.sort(function(a, b) {
+        var distancea = Math.abs(queryDate - a);
+        var distanceb = Math.abs(queryDate - b);
+        return distancea - distanceb; // sort a before b when the distance is smaller
+      });
+      return i[0];
     },
     fillDates: function (a, b) {
       for (var c = new Date(a), d = new Date(b), e = [], f = c; d >= f;) {
