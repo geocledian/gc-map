@@ -1,8 +1,8 @@
 /*
  Vue.js Geocledian map component
  created:     2019-11-04, jsommer
- last update: 2020-06-18, jsommer
- version: 0.9.4
+ last update: 2020-07-01, jsommer
+ version: 0.9.5
 */
 "use strict";
 
@@ -594,7 +594,7 @@ Vue.component('gc-map', {
             </div>
             <!-- container for map and newParcel div -->
 
-            <div :id="'timelineContainer_'+this.gcWidgetId" class="is-inline is-hidden" v-if="availableTools.includes('video')">
+            <div :id="'timelineContainer_'+this.gcWidgetId" class="" v-show="availableTools.includes('video') && !activeMapActions.includes('edit')">
             <!-- video -->
             <div :id="'player_'+this.gcWidgetId" class="gc-player is-pulled-left" style="z-index: 1000; position: relative; left: 0px; bottom: 0px; margin-bottom: 0px!important;">
               <button id="btnPlayerOnOff" class="button is-outlined is-orange" 
@@ -1011,7 +1011,7 @@ Vue.component('gc-map', {
     }
   },
   methods: {
-    getApiUrl: function (endpoint) {
+    getApiUrl: function (endpoint, request_method) {
       /* handles requests directly against  geocledian endpoints with API keys
           or (if gcProxy is set)
         also requests against the URL of gcProxy prop without API-Key; then
@@ -1027,10 +1027,19 @@ Vue.component('gc-map', {
       //   endpoint = encodeURIComponent(endpoint);
       // }
       
-      // with or without apikey depending on gcProxy property
-      return (this.gcProxy ? 
-                protocol + '://' + this.gcProxy + this.apiBaseUrl + endpoint  : 
-                protocol + '://' + this.gcHost + this.apiBaseUrl + endpoint + "?key="+this.apiKey);
+      if (request_method === "POST") {
+        // omit API KEY on POST; it should be already inside the JSON Payload
+        // if the API is passed as query parameter in the URL, API will fail with "key is not authorized!"
+        return (this.gcProxy ? 
+          protocol + '://' + this.gcProxy + this.apiBaseUrl + endpoint  : 
+          protocol + '://' + this.gcHost + this.apiBaseUrl + endpoint);
+      }
+      else {
+        // with or without apikey depending on gcProxy property
+        return (this.gcProxy ? 
+                  protocol + '://' + this.gcProxy + this.apiBaseUrl + endpoint  : 
+                  protocol + '://' + this.gcHost + this.apiBaseUrl + endpoint + "?key="+this.apiKey);
+      }
     },
     initMap: function () {
       console.debug("initMap()");
@@ -1211,6 +1220,12 @@ Vue.component('gc-map', {
       //   this.initDatePickers();
       //   }.bind(this)
       // );
+    },
+    destroyMap () {
+      if (this.mymap) {
+        this.mymap.off();
+        this.mymap.remove();
+      }
     },
     initZoomControl() {
       if (this.zoomControl) {
@@ -1801,7 +1816,9 @@ Vue.component('gc-map', {
           // document.getElementById(this.gcWidgetId).getElementsByClassName("gc-logo")[0].classList.remove("is-hidden");
           this.disableCreateParcelBtn();
           // document.getElementById(this.gcWidgetId).getElementsByClassName("gc-options-title")[0].classList.remove("is-hidden");
-          document.getElementById("timelineContainer_"+this.gcWidgetId).classList.remove("is-hidden");
+          // if (this.availableTools.includes('video')) {
+          //   document.getElementById("timelineContainer_"+this.gcWidgetId).classList.remove("is-hidden");
+          // }
         }
         catch (err) {
         }
@@ -1820,7 +1837,9 @@ Vue.component('gc-map', {
       } 
       else 
       {
-        try { document.getElementById("timelineContainer_"+this.gcWidgetId).classList.add("is-hidden"); } catch (err) { }
+        // try { 
+        //   document.getElementById("timelineContainer_"+this.gcWidgetId).classList.add("is-hidden"); 
+        // } catch (err) { }
 
         //reset mapOptions
         // document.getElementById(this.gcWidgetId).getElementsByClassName("gc-options-title")[0].classList.add("is-hidden");
@@ -1877,20 +1896,31 @@ Vue.component('gc-map', {
         {
           console.debug("response " + xmlHttp.responseText + " - " + xmlHttp.status);
 
-          if (xmlHttp.responseText == "1") {
-            console.log("parcel deleted.");
-          }
-          if (xmlHttp.responseText == "0") {
-            console.log("error deleting parcel.");
-          }
-          if (xmlHttp.responseText == "") {
+          // if (xmlHttp.responseText === "1") {
+          //   console.log("parcel deleted.");
+          // }
+          // if (xmlHttp.responseText === "0") {
+          //   console.log("error deleting parcel.");
+          // }
+          if (xmlHttp.responseText === "") {
             console.log("parcel marked for deletion.");
           }
-          //refresh parcel list
-          //this.removeFilter();
 
-          //hide loading spinner
-          this.isloading = false;
+          //TODO: refresh map & switch to next parcel if possible
+          // workaround: delay at least 5 seconds; DELETE operation is asynchronous on the server side
+          // it will return 0 or 1 but the deleting will handled some time because its not high priority
+          setTimeout( function() {
+            this.destroyMap();
+            this.initMap();
+            /// empty current parcel id so the first one will be selected
+            this.currentParcelID = -1;
+            this.getParcelTotalCount(this.filterString);
+  
+            document.getElementById("btnDeleteParcel_" + this.gcWidgetId).classList.remove("is-loading");
+            //hide loading spinner
+            this.isloading = false;
+          }.bind(this), 5000);
+
         }
       }.bind(this);
 
@@ -1910,7 +1940,7 @@ Vue.component('gc-map', {
 
       //Show requests on the DEBUG console for developers
       console.debug("registerParcel()");
-      console.debug("POST " + this.getApiUrl(endpoint));
+      console.debug("POST " + this.getApiUrl(endpoint, "POST"));
       //console.debug(postData);
 
       let xmlHttp = new XMLHttpRequest();
@@ -1941,13 +1971,13 @@ Vue.component('gc-map', {
             // empty viewModel first!
             this.parcels = [];
 
-            this.getParcelTotalCount(filterString);
+            this.getParcelTotalCount(this.filterString);
           }
           document.getElementById("btnRegisterParcel_" + this.gcWidgetId).classList.remove("is-loading");
         }
       }.bind(this);
 
-      xmlHttp.open("POST", this.getApiUrl(endpoint), async);
+      xmlHttp.open("POST", this.getApiUrl(endpoint, "POST"), async);
       xmlHttp.setRequestHeader("Content-type", "application/json");
       xmlHttp.send(postData); //must be string
     },
@@ -2346,7 +2376,7 @@ Vue.component('gc-map', {
         this.showCurrentTimeMarker(p.timeseries[this.currentRasterIndex].date);
       }
       //show timeline container
-      document.getElementById("timelineContainer_"+this.gcWidgetId).classList.remove('is-hidden');
+      //document.getElementById("timelineContainer_"+this.gcWidgetId).classList.remove('is-hidden');
     },
     startPauseVideo: function () {
       
