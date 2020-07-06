@@ -1,7 +1,7 @@
 /*
  Vue.js Geocledian map component
  created:     2019-11-04, jsommer
- last update: 2020-07-01, jsommer
+ last update: 2020-07-02, Tarun
  version: 0.9.5
 */
 "use strict";
@@ -1365,16 +1365,18 @@ Vue.component('gc-map', {
       } else {
         params = "&count=True";
       }
-      let xmlHttp = new XMLHttpRequest();
-      let async = true;
 
       //Show requests on the DEBUG console for developers
       console.debug("getParcelTotalCount()");
       console.debug("GET " + this.getApiUrl(endpoint) + params);
 
-      xmlHttp.onreadystatechange = function () {
-        if (xmlHttp.readyState == 4) {
-          var tmp = JSON.parse(xmlHttp.responseText);
+      // Axios implement start
+      axios({
+        method: 'GET',
+        url: this.getApiUrl(endpoint) + params,
+      }).then(function (response) {
+        if(response.status === 200){
+          var tmp = response.data;
 
           if (tmp.content == "key is not authorized") {
             // show message, hide spinner, don't show map
@@ -1414,9 +1416,10 @@ Vue.component('gc-map', {
             }
           }
         }
-      }.bind(this);
-      xmlHttp.open("GET", this.getApiUrl(endpoint) + params, async);
-      xmlHttp.send();
+      }.bind(this)).catch(err => {
+        console.log("err= " + err);
+      })
+      // Axios implement end
     },
     getAllParcels: function (parcel_id, offset, filterString) {
 
@@ -1436,17 +1439,18 @@ Vue.component('gc-map', {
       if (filterString) {
         params = params + filterString;
       }
-      let xmlHttp = new XMLHttpRequest();
-      let async = true;
 
       //Show requests on the DEBUG console for developers
       console.debug("getAllParcels()");
       console.debug("GET " + this.getApiUrl(endpoint) + params);
 
-      xmlHttp.onreadystatechange = function () {
-        if (xmlHttp.readyState == 4) {
-          var tmp = JSON.parse(xmlHttp.responseText);
-
+      // Axios implement start
+      axios({
+        method: 'GET',
+        url: this.getApiUrl(endpoint) + params,
+      }).then(function (response) {
+        if(response.status === 200){
+          var tmp = response.data;
           if (tmp.content == "key is not authorized") {
             // show message, hide spinner, don't show map
             this.api_err_msg = this.$t('api_msg.unauthorized_key') + "<br>" + this.$t('api_msg.support');
@@ -1499,11 +1503,11 @@ Vue.component('gc-map', {
             console.log("error selecting parcel_id");
             console.log(err);
           }
-
         }
-      }.bind(this);
-      xmlHttp.open("GET", this.getApiUrl(endpoint) + params, async);
-      xmlHttp.send();
+      }.bind(this)).catch(err => {
+        console.log("err= " + err);
+      })
+      // Axios implement end
     },
     // hack; see getAllParcels() for explanation
     handleCurrentParcelIDchange: function () {
@@ -1551,16 +1555,18 @@ Vue.component('gc-map', {
     getParcelsAttributes(parcel_id) {
 
       const endpoint = "/parcels/" + parcel_id;
-      let xmlHttp = new XMLHttpRequest();
-      let async = true;
 
       //Show requests on the DEBUG console for developers
       console.debug("getParcelsAttributes()");
       console.debug("GET " + this.getApiUrl(endpoint));
-
-      xmlHttp.onreadystatechange = function () {
-        if (xmlHttp.readyState == 4) {
-          var tmp = JSON.parse(xmlHttp.responseText);
+      
+      // Axios implement start
+      axios({
+        method: 'GET',
+        url: this.getApiUrl(endpoint),
+      }).then(function (response) {
+        if(response.status === 200){
+          var tmp = response.data;
           var row = this.getCurrentParcel();
 
           if (tmp.content.length > 0) {
@@ -1581,11 +1587,11 @@ Vue.component('gc-map', {
 
             this.getParcelsProductData(parcel_id, this.selectedProduct, this.selectedSource);
           }
-
         }
-      }.bind(this);
-      xmlHttp.open("GET", this.getApiUrl(endpoint), async);
-      xmlHttp.send();
+      }.bind(this)).catch(err => {
+        console.log("err= " + err);
+      })
+      // Axios implement end
     },
     getParcelsProductData: function (parcel_id, productName, source) {
 
@@ -1595,9 +1601,6 @@ Vue.component('gc-map', {
       const endpoint = "/parcels/" + parcel_id + "/" + productName
       let params = "&source=" + source + "&order=date";
 
-      let xmlHttp = new XMLHttpRequest();
-      let async = true;
-
       // empty timeseries first!
       this.currentTimeseries = [];
 
@@ -1605,10 +1608,13 @@ Vue.component('gc-map', {
       console.debug("getParcelsProductData()");
       console.debug("GET " + this.getApiUrl(endpoint) + params);
 
-      xmlHttp.onreadystatechange = function () {
-        if (xmlHttp.readyState == 4) {
-          //console.log(xmlHttp.responseText);
-          let tmp = JSON.parse(xmlHttp.responseText);
+      // Axios implement start
+      axios({
+        method: 'GET',
+        url: this.getApiUrl(endpoint) + params,
+      }).then(function (response) {
+        if(response.status === 200){
+          var tmp = response.data;
           let row = this.getCurrentParcel();
 
           if (tmp.content.length > 0) {
@@ -1640,11 +1646,11 @@ Vue.component('gc-map', {
             //hide spinner
             this.isloading = false;
           }
-
         }
-      }.bind(this);
-      xmlHttp.open("GET", this.getApiUrl(endpoint) + params, async);
-      xmlHttp.send();
+      }.bind(this)).catch(err => {
+        console.log("err= " + err);
+      })
+      // Axios implement end
     },
     getCurrentParcel: function () {
 
@@ -1779,15 +1785,16 @@ Vue.component('gc-map', {
       const endpoint =  "/parcels/" + parcel_id + "/" + productName + "/" + source + "/" + raster_id;
       let params =  "&lat=" + latlng.lat + "&lon=" + latlng.lng;
 
-      let xmlHttp = new XMLHttpRequest();
-      let async = true;
-
       //Show requests on the DEBUG console for developers
       console.debug("GET " + this.getApiUrl(endpoint) + params);
 
-      xmlHttp.onreadystatechange = function () {
-        if (xmlHttp.readyState == 4) {
-          var tmp = JSON.parse(xmlHttp.responseText);
+      // Axios implement start
+      axios({
+        method: 'GET',
+        url: this.getApiUrl(endpoint) + params,
+      }).then(function (response) {
+        if(response.status === 200){
+          var tmp = response.data;
 
           if (tmp.content.length > 0) {
             this.popup.setContent('<span class="is-large"><b>' + this.$t("map.popups.indexValue")+ ': '+
@@ -1796,9 +1803,10 @@ Vue.component('gc-map', {
               this.formatDecimal(tmp.content[0].pixel_value) + "</span>");
           }
         }
-      }.bind(this);
-      xmlHttp.open("GET", this.getApiUrl(endpoint) + params, async);
-      xmlHttp.send();
+      }.bind(this)).catch(err => {
+        console.log("err= " + err);
+      })
+      // Axios implement end
     },
     createParcelAction: function () {
 
@@ -1888,13 +1896,17 @@ Vue.component('gc-map', {
       console.debug("deleteParcel()");
       console.debug("DELETE " + this.getApiUrl(endpoint));
 
-      var xmlHttp = new XMLHttpRequest();
-      var async = true;
-
-      xmlHttp.onreadystatechange = function () {
-        if (xmlHttp.readyState == 4) //if ready
-        {
-          console.debug("response " + xmlHttp.responseText + " - " + xmlHttp.status);
+      // Axios implement start
+      axios({
+        method: 'DELETE',
+        url: this.getApiUrl(endpoint),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      }).then(function (response) {
+        if(response.status === 200){
+          var tmp = response.data;
 
           // if (xmlHttp.responseText === "1") {
           //   console.log("parcel deleted.");
@@ -1920,14 +1932,11 @@ Vue.component('gc-map', {
             //hide loading spinner
             this.isloading = false;
           }.bind(this), 5000);
-
         }
-      }.bind(this);
-
-      xmlHttp.open("DELETE", this.getApiUrl(endpoint), async);
-      xmlHttp.setRequestHeader('Content-type', 'application/json');
-
-      xmlHttp.send(null);
+      }.bind(this)).catch(err => {
+        console.log("err= " + err);
+      })
+      // Axios implement end
     },
     registerParcel: function () {
 
@@ -1943,14 +1952,19 @@ Vue.component('gc-map', {
       console.debug("POST " + this.getApiUrl(endpoint, "POST"));
       //console.debug(postData);
 
-      let xmlHttp = new XMLHttpRequest();
-      let async = true;
-
-      xmlHttp.onreadystatechange = function () {
-        if (xmlHttp.readyState == 4) //if ready
-        {
-          console.debug(xmlHttp.responseText);
-          var tmp = JSON.parse(xmlHttp.responseText);
+      // Axios implement start
+      axios({
+        method: 'POST',
+        url: this.getApiUrl(endpoint, "POST"),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        data: postData,
+      }).then(function (response) {
+        if(response.status === 200){
+          console.debug(response.data);
+          var tmp = response.data;
 
           document.getElementById("divNewParcelMsg_" + this.gcWidgetId).classList.remove("is-hidden");
 
@@ -1975,11 +1989,10 @@ Vue.component('gc-map', {
           }
           document.getElementById("btnRegisterParcel_" + this.gcWidgetId).classList.remove("is-loading");
         }
-      }.bind(this);
-
-      xmlHttp.open("POST", this.getApiUrl(endpoint, "POST"), async);
-      xmlHttp.setRequestHeader("Content-type", "application/json");
-      xmlHttp.send(postData); //must be string
+      }.bind(this)).catch(err => {
+        console.log("err= " + err);
+      })
+      // Axios implement end
     },
     queryIndexValueAction: function () {
 

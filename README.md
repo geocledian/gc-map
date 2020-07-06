@@ -119,6 +119,7 @@ Please contact [us](mailto:info@geocledian.com) from geocledian.com if you have 
 - [Leaflet Draw Plugin](http://leaflet.github.io/Leaflet.draw/docs/leaflet-draw-latest.html)
 - [Leaflet GeoSearch Plugin](https://github.com/smeijer/leaflet-geosearch)
 - [vis.js](https://visjs.org/)
+- [axios.js](https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js)
 
 ## Legal: Terms of use from third party data providers
 - You have to add the copyright information of the used data. At the time of writing the following text has to be visible for [Landsat](https://www.usgs.gov/information-policies-and-instructions/crediting-usgs) and [Sentinel](https://scihub.copernicus.eu/twiki/pub/SciHubWebPortal/TermsConditions/TC_Sentinel_Data_31072014.pdf) data:
