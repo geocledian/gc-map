@@ -1375,6 +1375,7 @@ Vue.component('gc-map', {
         method: 'GET',
         url: this.getApiUrl(endpoint) + params,
       }).then(function (response) {
+
         if(response.status === 200){
           var tmp = response.data;
 
@@ -1694,19 +1695,44 @@ Vue.component('gc-map', {
       if (row) {
         const endpoint =  row.png;
         let params = "&colormap=" + this.colormap;
-        this.map_addRaster(this.getApiUrl(endpoint) + params, row.bounds);
 
-        if (this.activeMapActions.includes("legend")) {
-          this.showLegend(row);
-        }
+        //check for error - prefetch
+        axios({
+          method: 'GET',
+          url: this.getApiUrl(endpoint) + params,
+        }).then(function (response) {
+          console.log(response);
 
-        // prepare download link for image
-        try {
-          this.prepareDownloadImageLink();
-        }
-        catch (err) {
-          console.debug("could not prepare download image link.");
-        }
+          if(response.status === 200) {
+            this.map_addRaster(this.getApiUrl(endpoint) + params, row.bounds);
+
+            if (this.activeMapActions.includes("legend")) {
+              this.showLegend(row);
+            }
+    
+            // prepare download link for image
+            try {
+              this.prepareDownloadImageLink();
+            }
+            catch (err) {
+              console.debug("could not prepare download image link.");
+            }
+          }
+
+          if(response.status === 500){
+
+            if (tmp.errors == "An unknown error occurred. Detail: Image empty!") {
+                // show message, hide spinner, don't show map
+                //this.api_err_msg = this.$t('api_msg.invalid_key') + "<br>" + this.$t('api_msg.support');
+                this.api_err_msg = "An unknown error occurred. Detail: Image empty!";
+                this.isloading = false;
+                return;
+            }
+          }
+        }.bind(this)).catch(err => {
+          console.log("err= " + err);
+        });
+
       }
     },
     showLegend: function (row) {
@@ -2497,7 +2523,8 @@ Vue.component('gc-map', {
   
       let matrix = {"landsat8": ["visible", "vitality", "variations","ndvi", "ndwi", "savi", "evi2", "npcri"],
                     "sentinel2": ["visible", "vitality", "variations", "ndvi", "ndre1", "ndre2", "ndre3",
-                                      "ndwi", "savi", "evi2", "cire", "npcri"]
+                                      "ndwi", "savi", "evi2", "cire", "npcri"],
+                    "vhr": ["visible","ndvi", "savi", "evi2"],
                     };
   
       // source may be "landsat8", "sentinel2" or "" so check for length

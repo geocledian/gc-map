@@ -26,7 +26,7 @@ const libs = ['https://unpkg.com/vue@2.6.11/dist/vue.min.js',
                 'css/bulma-ext/bulma-calendar.min.js',
                 'https://unpkg.com/leaflet-geosearch@2.7.0/dist/bundle.min.js',
                 'https://unpkg.com/vis-timeline@7.1.2/standalone/umd/vis-timeline-graph2d.min.js',
-				'https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js'
+				        'https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js'
             ];
 
 function loadJSscriptDeps(url_list, final_callback) {
@@ -106,7 +106,7 @@ function initComponent() {
 
     // load map component dynamically
     // change for DEBUG to js/gc-map.js
-    loadJSscript("js/gc-map.js", function() {
+    loadJSscript("js/gc-map.min.js", function() {
         /* when ready, init global vue root instance */
         vmRoot = new Vue({
             el: "#gc-app",
