@@ -20,15 +20,23 @@ const gcMapLocales = {
                     "vitality": "Vitality",
                     "variations": "Variations (relative)",
                     "ndvi": "NDVI",
+                    "ndvi_grapes": "NDVI Grapes",
                     "ndre1": "NDRE1",
+                    "ndre1_grapes": "NDRE1 Grapes",
                     "ndre2": "NDRE2",
+                    "ndre2_grapes": "NDRE2 Grapes",
                     "ndwi": "NDWI",
                     "ndwi_fc": "NDWI (Forest coniferous)",
                     "ndwi_fb": "NDWI (Forest broadleaf)",
+                    "ndwi_grapes": "NDWI Grapes",
                     "savi": "SAVI",
+                    "savi_grapes": "SAVI Grapes",
                     "evi2": "EVI2",
+                    "evi2_grapes": "EVI2 Grapes",
                     "cire": "CIRE",
+                    "cire_grapes": "CIRE Grapes",
                     "npcri": "NPCRI",
+                    "npcri_grapes": "NPCRI Grapes",
                     "pseudocolor": "Pseudocolor (relative)",
                     "redblue": "Red-Blue (relative)",
                     "bluered": "Blue-Red (relative)"
@@ -129,15 +137,22 @@ const gcMapLocales = {
                     "vitality": "Vitalität",
                     "variations": "Variabilität (relativ)",
                     "ndvi": "NDVI",
+                    "ndvi_grapes": "NDVI (Wein)",
                     "ndre1": "NDRE1",
+                    "ndre1_grapes": "NDRE1 (Wein)",
                     "ndre2": "NDRE2",
+                    "ndre2_grapes": "NDRE2 (Wein)",
                     "ndwi": "NDWI",
                     "ndwi_fc": "NDWI (Nadelwald)",
                     "ndwi_fb": "NDWI (Laubwald)",
+                    "ndwi_grapes": "NDWI (Wein)",
                     "savi": "SAVI",
                     "evi2": "EVI2",
+                    "evi2_grapes": "EVI2 (Wein)",
                     "cire": "CIRE",
+                    "cire_grapes": "CIRE (Wein)",
                     "npcri": "NPCRI",
+                    "npcri_grapes": "NPCRI (Wein)",
                     "pseudocolor": "Pseudofarben (relativ)",
                     "redblue": "Rot-Blau (relativ)",
                     "bluered": "Blau-Rot (relativ)"
@@ -361,15 +376,23 @@ Vue.component('gc-map', {
                           <option value="variations">{{$t("options.colormap.variations")}}</option>
                           <option value="vitality">{{$t("options.colormap.vitality")}}</option>
                           <option value="ndvi">{{$t("options.colormap.ndvi")}}</option>
+                          <option value="ndvi_grapes">{{$t("options.colormap.ndvi_grapes")}}</option>
                           <option value="ndre1">{{$t("options.colormap.ndre1")}}</option>
+                          <option value="ndre1_grapes">{{$t("options.colormap.ndre1_grapes")}}</option>
                           <option value="ndre2">{{$t("options.colormap.ndre2")}}</option>
+                          <option value="ndre2_grapes">{{$t("options.colormap.ndre2_grapes")}}</option>
                           <option value="ndwi">{{$t("options.colormap.ndwi")}}</option>
                           <option value="ndwi_fc">{{$t("options.colormap.ndwi_fc")}}</option>
                           <option value="ndwi_fb">{{$t("options.colormap.ndwi_fb")}}</option>
+                          <option value="ndwi_grapes">{{$t("options.colormap.ndwi_grapes")}}</option>
                           <option value="savi">{{$t("options.colormap.savi")}}</option>
+                          <option value="savi_grapes">{{$t("options.colormap.savi_grapes")}}</option>
                           <option value="evi2">{{$t("options.colormap.evi2")}}</option>
+                          <option value="evi2_grapes">{{$t("options.colormap.evi2_grapes")}}</option>
                           <option value="cire">{{$t("options.colormap.cire")}}</option>
+                          <option value="cire_grapes">{{$t("options.colormap.cire_grapes")}}</option>
                           <option value="npcri">{{$t("options.colormap.npcri")}}</option>
+                          <option value="npcri_grapes">{{$t("options.colormap.npcri_grapes")}}</option>
                           <option value="pseudocolor">{{$t("options.colormap.pseudocolor")}}</option>
                           <option value="redblue">{{$t("options.colormap.redblue")}}</option>
                           <option value="bluered">{{$t("options.colormap.bluered")}}</option>
